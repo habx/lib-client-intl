@@ -1,6 +1,6 @@
 {
   "name": "@habx/lib-client-intl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lib Client Intl",
   "main": "./dist/index.js",
   "types": "./dist/typings/index.d.ts",
