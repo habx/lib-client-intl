@@ -28,12 +28,12 @@ const buildIntl = <messageIds extends string>() => {
     locale: string
     messages: Record<messageIds, string>
   }> = ({ children, locale, messages }) => {
-    if (!messages) {
-      return null
-    }
+    const intl = useIntl()
+
+    const allMessages = { ...messages, ...intl.messages }
 
     return (
-      <BaseIntlProvider locale={locale} messages={messages}>
+      <BaseIntlProvider locale={locale} messages={allMessages}>
         {children}
       </BaseIntlProvider>
     )
