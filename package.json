@@ -1,7 +1,7 @@
 {
-  "name": "@habx/lib-template",
+  "name": "@habx/lib-client-intl",
   "version": "0.1.0",
-  "description": "Lib template",
+  "description": "Lib Client Intl",
   "main": "./dist/index.js",
   "types": "./dist/typings/index.d.ts",
   "scripts": {
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/habx/lib-template.git"
+    "url": "git+https://github.com/habx/lib-client-intl.git"
   },
   "author": "HABX Front End Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/habx/lib-template/issues"
+    "url": "https://github.com/habx/lib-client-intl/issues"
   },
-  "homepage": "https://github.com/habx/lib-template#readme",
+  "homepage": "https://github.com/habx/lib-client-intl#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
