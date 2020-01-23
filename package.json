@@ -34,9 +34,13 @@
       "eslint --fix"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "react-intl": "^3.11.0"
+  },
   "devDependencies": {
     "@habx/eslint-config-client": "^2.6.1",
+    "@types/lodash": "^4.14.149",
     "bili": "^4.7.4",
     "husky": "^4.0.0",
     "lint-staged": "^10.0.1",
