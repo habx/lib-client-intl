@@ -2,18 +2,22 @@
   "name": "@habx/lib-client-intl",
   "version": "0.3.0",
   "description": "Lib Client Intl",
-  "main": "./dist/index.js",
+  "sideEffects": false,
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/esm/index.js",
   "types": "./dist/typings/index.d.ts",
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean && npm run build:types && bili",
-    "build:watch": "npm run clean && npm run build:types && bili --watch",
-    "build:types": "tsc --emitDeclarationOnly",
-    "postbuild": "node ./scripts/postbuild.js",
-    "publish": "cd dist && npm publish && cd ..",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "bili",
+    "build:watch": "npm run clean && tsc --watch",
     "lint": "eslint \"src/**\"",
     "test": "echo TODO"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/habx/lib-client-intl.git"
@@ -34,9 +38,11 @@
       "eslint --fix"
     ]
   },
-  "dependencies": {
+  "peerDependencies": {
     "lodash": "^4.17.15",
-    "react": "^16.12.0",
+    "react": "^16.12.0"
+  },
+  "dependencies": {
     "react-intl": "^4.0.0"
   },
   "devDependencies": {
@@ -46,8 +52,10 @@
     "bili": "^4.7.4",
     "husky": "^4.0.0",
     "lint-staged": "^10.0.1",
+    "lodash": "^4.17.15",
+    "react": "^16.12.0",
     "rimraf": "^3.0.0",
     "rollup-plugin-typescript2": "^0.26.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.8.3"
   }
 }
