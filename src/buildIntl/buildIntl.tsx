@@ -35,7 +35,7 @@ const buildIntl = <messageIds extends string>({
   }
 
   const IntlProvider: React.FunctionComponent<{
-    locale: string
+    locale?: string
     messages: Record<messageIds, string>
   }> = ({ children, locale, messages }) => {
     const intl = useInnerIntl()
@@ -46,7 +46,10 @@ const buildIntl = <messageIds extends string>({
     }
 
     return (
-      <BaseIntlProvider locale={intl.locale ?? locale} messages={allMessages}>
+      <BaseIntlProvider
+        locale={intl.locale ?? locale ?? 'fr'}
+        messages={allMessages}
+      >
         {children}
       </BaseIntlProvider>
     )
