@@ -3,7 +3,7 @@ import * as React from 'react'
 import { IntlProvider as BaseIntlProvider, useIntl } from 'react-intl'
 
 const buildIntl = <messageIds extends string>({
-  isRoot = true,
+  isRoot,
   prefix,
 }: {
   isRoot?: boolean
