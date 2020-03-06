@@ -46,7 +46,7 @@ const buildIntl = <messageIds extends string>({
     }
 
     return (
-      <BaseIntlProvider locale={intl.locale || locale} messages={allMessages}>
+      <BaseIntlProvider locale={intl.locale ?? locale} messages={allMessages}>
         {children}
       </BaseIntlProvider>
     )
