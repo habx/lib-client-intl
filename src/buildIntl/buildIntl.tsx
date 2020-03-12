@@ -13,25 +13,29 @@ const buildIntl = <messageIds extends string>({
 
   const useTranslate = () => {
     const intl = useIntl()
-    return (
-      id?: messageIds,
-      values: Record<
-        string,
-        string | number | boolean | null | undefined | Date
-      > = {},
-      options: { upperFirst?: boolean } = {}
-    ) => {
-      const { upperFirst = true } = options
 
-      let translation = id
-        ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
-        : ''
-      if (upperFirst) {
-        translation = lodashUpperFirst(translation)
-      }
+    return React.useCallback(
+      (
+        id?: messageIds,
+        values: Record<
+          string,
+          string | number | boolean | null | undefined | Date
+        > = {},
+        options: { upperFirst?: boolean } = {}
+      ) => {
+        const { upperFirst = true } = options
 
-      return translation
-    }
+        let translation = id
+          ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
+          : ''
+        if (upperFirst) {
+          translation = lodashUpperFirst(translation)
+        }
+
+        return translation
+      },
+      [intl]
+    )
   }
 
   const IntlProvider: React.FunctionComponent<{
