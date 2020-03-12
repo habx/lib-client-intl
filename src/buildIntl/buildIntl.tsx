@@ -1,6 +1,10 @@
 import { upperFirst as lodashUpperFirst, mapKeys } from 'lodash'
 import * as React from 'react'
-import { IntlProvider as BaseIntlProvider, useIntl } from 'react-intl'
+import {
+  IntlProvider as BaseIntlProvider,
+  IntlShape,
+  useIntl,
+} from 'react-intl'
 
 const buildIntl = <messageIds extends string>({
   isRoot,
@@ -13,25 +17,32 @@ const buildIntl = <messageIds extends string>({
 
   const useTranslate = () => {
     const intl = useIntl()
-    return (
-      id?: messageIds,
-      values: Record<
-        string,
-        string | number | boolean | null | undefined | Date
-      > = {},
-      options: { upperFirst?: boolean } = {}
-    ) => {
-      const { upperFirst = true } = options
 
-      let translation = id
-        ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
-        : ''
-      if (upperFirst) {
-        translation = lodashUpperFirst(translation)
-      }
+    const ref = React.useRef<IntlShape>(intl)
+    ref.current = intl
 
-      return translation
-    }
+    return React.useCallback(
+      (
+        id?: messageIds,
+        values: Record<
+          string,
+          string | number | boolean | null | undefined | Date
+        > = {},
+        options: { upperFirst?: boolean } = {}
+      ) => {
+        const { upperFirst = true } = options
+
+        let translation = id
+          ? ref.current.formatMessage({ id: `${prefix}-${id}` }, values)
+          : ''
+        if (upperFirst) {
+          translation = lodashUpperFirst(translation)
+        }
+
+        return translation
+      },
+      []
+    )
   }
 
   const IntlProvider: React.FunctionComponent<{
