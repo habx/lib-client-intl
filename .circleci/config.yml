@@ -8,9 +8,9 @@ version: 2.1
 # - Docker configuration - #
 alias:
 # https://circleci.com/docs/2.0/circleci-images/#nodejs
-  - &docker_node12_configuration
+  - &docker_node14_configuration
     docker:
-      - image: circleci/node:12.0.0
+      - image: circleci/node:14.0.0
         user: root
   - &docker_buildpack_deps_configuration
     docker:
@@ -39,6 +39,12 @@ alias:
     run:
       name: Preconfigure environment ~/.npmrc
       command: |
+        echo "@${GITHUB_PKG_NPM_ORG}:registry=https://npm.pkg.github.com/" > ~/.npmrc
+        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
+  - &preconfig-deprecated
+    run:
+      name: Preconfigure environment ~/.npmrc (deprecated)
+      command: |
         echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 # - Node modules - #
   - &install_node_modules_with_cache
@@ -65,10 +71,10 @@ alias:
         - run: echo
 jobs:
   build:
-    <<: *docker_node12_configuration
+    <<: *docker_node14_configuration
     steps:
       - checkout
-      - *preconfig
+      - *preconfig-deprecated
       - *install_node_modules_with_cache_production
       - *install_node_modules_with_cache
       - run: export NODE_ENV=production; npm run build
@@ -78,50 +84,84 @@ jobs:
             - dist
 
   storybook-build:
-    <<: *docker_node12_configuration
+    <<: *docker_node14_configuration
     steps:
       - checkout
-      - *preconfig
+      - *preconfig-deprecated
       - *install_node_modules_with_cache
       - attach_workspace:
           at: ~/project
-      - *preconfig
+      - *preconfig-deprecated
       - *install_node_modules_with_cache
       - run: npm run storybook:build
 
   lint:
-    <<: *docker_node12_configuration
+    <<: *docker_node14_configuration
     steps:
       - checkout
-      - *preconfig
+      - *preconfig-deprecated
       - *install_node_modules_with_cache
       - run: npm run lint
 
   tests:
-    <<: *docker_node12_configuration
+    <<: *docker_node14_configuration
     steps:
       - checkout
-      - *preconfig
+      - *preconfig-deprecated
       - *install_node_modules_with_cache
       - run: npm run test
 
+  tests-puppeteer:
+    docker:
+      - image: jean9696/drone-puppeteer
+    parallelism: 1
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - *preconfig-deprecated
+      - *install_node_modules_with_cache
+      - run:
+          name: Puppeteer test
+          command: |
+            apt-get -yq update
+            apt-get -y install nginx
+            sed -i 's/root.*/root \/root\/project\/build-test\/;/' /etc/nginx/sites-enabled/default
+            nginx -c /etc/nginx/nginx.conf
+            chmod -R a+rx /root/
+            npm run test
+    environment:
+      HABX_ROLE: admin
+      LOCAL_URL: http://localhost
+
   npm-publish:
-    <<: *docker_node12_configuration
+    <<: *docker_node14_configuration
     steps:
       - checkout
       - attach_workspace:
           at: ~/project
       - *preconfig
       - *install_node_modules_with_cache
-      - run: NPM_TOKEN=${NPM_TOKEN_RW} npm publish
+      - run: npm publish
 
-  storybook-publish:
-    <<: *docker_node12_configuration
+  npm-deprecated-publish:
+    <<: *docker_node14_configuration
     steps:
       - checkout
       - attach_workspace:
           at: ~/project
-      - *preconfig
+      - *preconfig-deprecated
+      - *install_node_modules_with_cache
+      - run: jq -M 'del(.publishConfig)' package.json > _package.json; mv _package.json package.json
+      - run: NPM_TOKEN=${NPM_TOKEN_RW} npm publish
+
+  storybook-publish:
+    <<: *docker_node14_configuration
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - *preconfig-deprecated
       - *install_node_modules_with_cache
       - run: npm run storybook:deploy
 
@@ -150,6 +190,13 @@ workflows:
           filters:
             <<: *filters_allow_tags
       - npm-publish:
+          context: default_env_vars
+          requires:
+            - tests
+          filters:
+            <<: *filters_allow_tags
+            <<: *filters_ignore_branches
+      - npm-deprecated-publish:
           context: default_env_vars
           requires:
             - tests
