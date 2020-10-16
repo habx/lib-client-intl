@@ -1,6 +1,6 @@
 {
   "name": "@habx/lib-client-intl",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Lib Client Intl",
   "sideEffects": false,
   "main": "./dist/index.cjs.js",
