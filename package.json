@@ -43,7 +43,7 @@
     "react": "^16.14.0"
   },
   "dependencies": {
-    "react-intl": "^5.0.1"
+    "react-intl": "^5.9.2"
   },
   "devDependencies": {
     "@habx/eslint-config-client": "^4.0.1",
