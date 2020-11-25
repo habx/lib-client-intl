@@ -21,7 +21,8 @@
   ],
   "vulnerabilityAlerts": {
     "labels": [
-      "security"
+      "security",
+      "dependencies"
     ],
     "schedule": [
       "at any time"
@@ -39,7 +40,8 @@
       ],
       "automerge": true,
       "labels": [
-        "habx-automerge"
+        "habx-automerge",
+        "dependencies"
       ]
     },
     {
@@ -52,14 +54,17 @@
       ],
       "automerge": true,
       "labels": [
-        "habx-automerge"
+        "habx-automerge",
+        "dependencies"
       ]
     },
     {
       "packagePatterns": [
         "^@habx/"
       ],
-      "schedule": ["at any time"],
+      "schedule": [
+        "at any time"
+      ],
       "prPriority": 5
     },
     {
@@ -72,7 +77,8 @@
       ],
       "automerge": true,
       "labels": [
-        "habx-automerge"
+        "habx-automerge",
+        "dependencies"
       ]
     },
     {
@@ -104,7 +110,8 @@
       "automerge": true,
       "prPriority": -5,
       "labels": [
-        "habx-automerge"
+        "habx-automerge",
+        "dependencies"
       ]
     },
     {
@@ -119,7 +126,8 @@
       "automerge": true,
       "prPriority": -10,
       "labels": [
-        "habx-automerge"
+        "habx-automerge",
+        "dependencies"
       ]
     }
   ]
