@@ -44,7 +44,7 @@
     "react": "^17.0.1"
   },
   "dependencies": {
-    "react-intl": "^5.13.1"
+    "react-intl": "^5.13.2"
   },
   "devDependencies": {
     "@habx/config-ci-front": "^0.6.0",
