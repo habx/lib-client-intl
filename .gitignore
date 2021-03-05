@@ -4,6 +4,7 @@
 # Build output folders
 lib/
 dist/
+docs/
 
 # Logs
 logs
