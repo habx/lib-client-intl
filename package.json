@@ -47,7 +47,7 @@
     "react-intl": "^5.20.10"
   },
   "devDependencies": {
-    "@habx/config-ci-front": "^0.17.0",
+    "@habx/config-ci-front": "^0.18.0",
     "@habx/eslint-config-client": "^6.3.0",
     "@types/lodash": "^4.14.173",
     "@types/react": "^17.0.24",
