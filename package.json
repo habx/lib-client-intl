@@ -52,7 +52,7 @@
     "@habx/config-ci-front": "^2.5.0",
     "@habx/eslint-config-client": "^6.9.2",
     "@types/lodash": "^4.14.182",
-    "@types/react": "^18.0.14",
+    "@types/react": "^18.0.15",
     "bili": "^5.0.5",
     "eslint": "^8.19.0",
     "husky": "^4.3.8",
