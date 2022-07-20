@@ -1,6 +1,10 @@
 import { upperFirst as lodashUpperFirst, mapKeys } from 'lodash'
 import * as React from 'react'
-import { IntlProvider as BaseIntlProvider, useIntl } from 'react-intl'
+import {
+  IntlProvider as BaseIntlProvider,
+  IntlShape,
+  useIntl,
+} from 'react-intl'
 
 const buildIntl = <messageIds extends string>({
   isRoot,
@@ -9,33 +13,38 @@ const buildIntl = <messageIds extends string>({
   isRoot?: boolean
   prefix: string
 }) => {
+  /**
+   * Allows to get the translation function outside of React context
+   */
+  let currentIntl: IntlShape | null = null
+  const getTranslateFunction =
+    (intl: IntlShape = currentIntl as IntlShape) =>
+    (
+      id?: messageIds,
+      values: Record<
+        string,
+        string | number | boolean | null | undefined | Date
+      > = {},
+      options: { upperFirst?: boolean } = {}
+    ) => {
+      const { upperFirst = true } = options
+
+      let translation = id
+        ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
+        : ''
+      if (upperFirst) {
+        translation = lodashUpperFirst(translation)
+      }
+
+      return translation
+    }
+
   const useInnerIntl = isRoot ? () => ({ messages: {}, locale: null }) : useIntl
 
   const useTranslate = () => {
     const intl = useIntl()
 
-    return React.useCallback(
-      (
-        id?: messageIds,
-        values: Record<
-          string,
-          string | number | boolean | null | undefined | Date
-        > = {},
-        options: { upperFirst?: boolean } = {}
-      ) => {
-        const { upperFirst = true } = options
-
-        let translation = id
-          ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
-          : ''
-        if (upperFirst) {
-          translation = lodashUpperFirst(translation)
-        }
-
-        return translation
-      },
-      [intl]
-    )
+    return React.useCallback(getTranslateFunction(intl), [intl])
   }
 
   const IntlProvider: React.FunctionComponent<{
@@ -44,6 +53,7 @@ const buildIntl = <messageIds extends string>({
     children: React.ReactNode
   }> = ({ children, locale, messages }) => {
     const intl = useInnerIntl()
+    currentIntl = intl as IntlShape
 
     const allMessages = {
       ...mapKeys(messages, (_, key) => `${prefix}-${key}`),
@@ -61,6 +71,7 @@ const buildIntl = <messageIds extends string>({
   }
 
   return {
+    getTranslateFunction,
     useTranslate,
     IntlProvider,
   }
