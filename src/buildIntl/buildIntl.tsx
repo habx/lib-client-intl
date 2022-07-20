@@ -14,38 +14,37 @@ const buildIntl = <messageIds extends string>({
   prefix: string
 }) => {
   /**
-   * Allows to get the current intl instance outside of React context
+   * Allows to get the translation function outside of React context
    */
-  let currentIntl: null | IntlShape = null
-  const getCurrentIntl = () => currentIntl
+  let currentIntl: IntlShape | null = null
+  const getTranslateFunction =
+    (intl: IntlShape = currentIntl as IntlShape) =>
+    (
+      id?: messageIds,
+      values: Record<
+        string,
+        string | number | boolean | null | undefined | Date
+      > = {},
+      options: { upperFirst?: boolean } = {}
+    ) => {
+      const { upperFirst = true } = options
+
+      let translation = id
+        ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
+        : ''
+      if (upperFirst) {
+        translation = lodashUpperFirst(translation)
+      }
+
+      return translation
+    }
 
   const useInnerIntl = isRoot ? () => ({ messages: {}, locale: null }) : useIntl
 
   const useTranslate = () => {
     const intl = useIntl()
 
-    return React.useCallback(
-      (
-        id?: messageIds,
-        values: Record<
-          string,
-          string | number | boolean | null | undefined | Date
-        > = {},
-        options: { upperFirst?: boolean } = {}
-      ) => {
-        const { upperFirst = true } = options
-
-        let translation = id
-          ? intl.formatMessage({ id: `${prefix}-${id}` }, values)
-          : ''
-        if (upperFirst) {
-          translation = lodashUpperFirst(translation)
-        }
-
-        return translation
-      },
-      [intl]
-    )
+    return React.useCallback(getTranslateFunction(intl), [intl])
   }
 
   const IntlProvider: React.FunctionComponent<{
@@ -72,7 +71,7 @@ const buildIntl = <messageIds extends string>({
   }
 
   return {
-    getCurrentIntl,
+    getTranslateFunction,
     useTranslate,
     IntlProvider,
   }
