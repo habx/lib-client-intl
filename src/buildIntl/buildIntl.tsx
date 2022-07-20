@@ -1,6 +1,10 @@
 import { upperFirst as lodashUpperFirst, mapKeys } from 'lodash'
 import * as React from 'react'
-import { IntlProvider as BaseIntlProvider, useIntl } from 'react-intl'
+import {
+  IntlProvider as BaseIntlProvider,
+  IntlShape,
+  useIntl,
+} from 'react-intl'
 
 const buildIntl = <messageIds extends string>({
   isRoot,
@@ -9,6 +13,12 @@ const buildIntl = <messageIds extends string>({
   isRoot?: boolean
   prefix: string
 }) => {
+  /**
+   * Allows to get the current intl instance outside of React context
+   */
+  let currentIntl: null | IntlShape = null
+  const getCurrentIntl = () => currentIntl
+
   const useInnerIntl = isRoot ? () => ({ messages: {}, locale: null }) : useIntl
 
   const useTranslate = () => {
@@ -44,6 +54,7 @@ const buildIntl = <messageIds extends string>({
     children: React.ReactNode
   }> = ({ children, locale, messages }) => {
     const intl = useInnerIntl()
+    currentIntl = intl as IntlShape
 
     const allMessages = {
       ...mapKeys(messages, (_, key) => `${prefix}-${key}`),
@@ -61,6 +72,7 @@ const buildIntl = <messageIds extends string>({
   }
 
   return {
+    getCurrentIntl,
     useTranslate,
     IntlProvider,
   }
