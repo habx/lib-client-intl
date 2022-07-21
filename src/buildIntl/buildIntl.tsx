@@ -17,8 +17,12 @@ const buildIntl = <messageIds extends string>({
    * Allows to get the translation function outside of React context
    */
   let currentIntl: IntlShape | null = null
+  const ConsumeIntl = () => {
+    currentIntl = useIntl()
+    return <React.Fragment />
+  }
   const getTranslateFunction =
-    (intl: IntlShape = currentIntl as IntlShape) =>
+    (intl: IntlShape | null = currentIntl) =>
     (
       id?: messageIds,
       values: Record<
@@ -27,6 +31,11 @@ const buildIntl = <messageIds extends string>({
       > = {},
       options: { upperFirst?: boolean } = {}
     ) => {
+      if (!intl) {
+        throw new Error(
+          'getTranslateFunction has been called without intl context'
+        )
+      }
       const { upperFirst = true } = options
 
       let translation = id
@@ -53,7 +62,6 @@ const buildIntl = <messageIds extends string>({
     children: React.ReactNode
   }> = ({ children, locale, messages }) => {
     const intl = useInnerIntl()
-    currentIntl = intl as IntlShape
 
     const allMessages = {
       ...mapKeys(messages, (_, key) => `${prefix}-${key}`),
@@ -65,6 +73,7 @@ const buildIntl = <messageIds extends string>({
         locale={intl.locale ?? locale ?? 'fr'}
         messages={allMessages}
       >
+        <ConsumeIntl />
         {children}
       </BaseIntlProvider>
     )
