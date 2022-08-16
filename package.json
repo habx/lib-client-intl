@@ -51,7 +51,7 @@
   "devDependencies": {
     "@habx/config-ci-front": "^3.3.1",
     "@habx/eslint-config-client": "^6.9.2",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.183",
     "@types/react": "^18.0.17",
     "bili": "^5.0.5",
     "eslint": "^8.22.0",
