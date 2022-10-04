@@ -6,6 +6,15 @@ import {
   useIntl,
 } from 'react-intl'
 
+type TranslateFunction = <messageIds extends string>(
+  id: messageIds,
+  values?: Record<string, string | number | boolean | null | undefined | Date>,
+  options?: { upperFirst?: boolean }
+) => string
+type GetTranslateFunctionReturnType<IntlParam> = IntlParam extends IntlShape
+  ? TranslateFunction
+  : null | TranslateFunction
+
 const buildIntl = <messageIds extends string>({
   isRoot,
   prefix,
@@ -21,21 +30,15 @@ const buildIntl = <messageIds extends string>({
     currentIntl = useIntl()
     return <React.Fragment />
   }
-  const getTranslateFunction =
-    (intl: IntlShape | null = currentIntl) =>
-    (
-      id?: messageIds,
-      values: Record<
-        string,
-        string | number | boolean | null | undefined | Date
-      > = {},
-      options: { upperFirst?: boolean } = {}
-    ) => {
-      if (!intl) {
-        throw new Error(
-          'getTranslateFunction has been called without intl context'
-        )
-      }
+  const getTranslateFunction = <IntlParam extends IntlShape | null>(
+    rawIntl?: IntlParam
+  ): GetTranslateFunctionReturnType<IntlParam> => {
+    const intl = rawIntl ?? currentIntl
+    if (!intl) {
+      return null as GetTranslateFunctionReturnType<IntlParam>
+    }
+
+    return (id, values = {}, options = {}) => {
       const { upperFirst = true } = options
 
       let translation = id
@@ -47,6 +50,7 @@ const buildIntl = <messageIds extends string>({
 
       return translation
     }
+  }
 
   const useInnerIntl = isRoot ? () => ({ messages: {}, locale: null }) : useIntl
 
